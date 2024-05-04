@@ -14,8 +14,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserService implements IUserService {
     private UserRepository userRepository;
-
     private RoleRepository roleRepository;
+
     @Override
     public User createUser(UserDTO userDTO) {
         String phoneNumber = userDTO.getPhoneNumber();
