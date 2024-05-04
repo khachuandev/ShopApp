@@ -35,10 +35,10 @@ public class User extends BaseModel {
     private Date dateOfBirth;
 
     @Column(name = "facebook_account_id")
-    private String facebookAccountId;
+    private int facebookAccountId;
 
     @Column(name = "google_account_id")
-    private String googleAccountId;
+    private int googleAccountId;
 
     @ManyToOne
     @JoinColumn(name = "role_id")
