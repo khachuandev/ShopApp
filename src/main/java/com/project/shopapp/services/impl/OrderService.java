@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -34,16 +35,18 @@ public class OrderService implements IOrderService {
         // Tao mot luong bang anh xa rieng de kiem soat viec anh xa
         modelMapper.typeMap(OrderDTO.class, Order.class)
                 .addMappings(mapper -> mapper.skip(Order::setId));
+        // Cap nhat cac truong cua don hang tu orderDTO
         Order order = new Order();
         modelMapper.map(orderDTO, order);
         order.setUser(user);
         order.setOrderDate(new Date()); // Lay thoi diem hien tai
-        order.setStatus(OrderStatus.PENDING);
+        order.setStatus(OrderStatus.PENDING); // mac dinh 1 don hang tao ra la pending
         // Kiem tra shipping date phai >= ngay hom nay
-        Date shippingDate = orderDTO.getShippingDate() == null ? new Date() : orderDTO.getShippingDate();
-        if(shippingDate.before(new Date())) {
+        LocalDate shippingDate = orderDTO.getShippingDate() == null ? LocalDate.now() : orderDTO.getShippingDate();
+        if(shippingDate.isBefore(LocalDate.now())) {
             throw new DataNotFoundException("Date must be at least today!");
         }
+        order.setShippingDate(shippingDate);
         order.setActive(true);
         orderRepository.save(order);
         return modelMapper.map(order, OrderResponse.class);
