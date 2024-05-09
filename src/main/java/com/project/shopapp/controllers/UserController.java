@@ -21,9 +21,7 @@ import java.util.List;
 public class UserController {
     private final IUserService userService;
     @PostMapping("/register")
-    public ResponseEntity<?> register(
-            @Valid @RequestBody UserDTO userDTO,
-            BindingResult result) {
+    public ResponseEntity<?> register(@Valid @RequestBody UserDTO userDTO, BindingResult result){
         try {
             if(result.hasErrors()) {
                 List<String> errorMessages = result.getFieldErrors()

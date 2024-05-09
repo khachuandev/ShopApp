@@ -7,7 +7,6 @@ import com.project.shopapp.models.OrderStatus;
 import com.project.shopapp.models.User;
 import com.project.shopapp.repositories.OrderRepository;
 import com.project.shopapp.repositories.UserRepository;
-import com.project.shopapp.responses.OrderResponse;
 import com.project.shopapp.services.IOrderService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -25,40 +24,41 @@ public class OrderService implements IOrderService {
     private final ModelMapper modelMapper;
 
     @Override
-    public OrderResponse createOrder(OrderDTO orderDTO) throws Exception {
-        // Tim xem userId co ton tai ko
+    public Order createOrder(OrderDTO orderDTO) throws Exception {
+        //tìm xem user'id có tồn tại ko
         User user = userRepository
                 .findById(orderDTO.getUserId())
-                .orElseThrow(() -> new DataNotFoundException("Cannot find user with id: " + orderDTO.getUserId()));
-        // convert orderDTO => Order
-        // dung thu vien Model Mapper
-        // Tao mot luong bang anh xa rieng de kiem soat viec anh xa
+                .orElseThrow(() -> new DataNotFoundException("Cannot find user with id: "+orderDTO.getUserId()));
+        //convert orderDTO => Order
+        //dùng thư viện Model Mapper
+        // Tạo một luồng bảng ánh xạ riêng để kiểm soát việc ánh xạ
         modelMapper.typeMap(OrderDTO.class, Order.class)
                 .addMappings(mapper -> mapper.skip(Order::setId));
-        // Cap nhat cac truong cua don hang tu orderDTO
+        // Cập nhật các trường của đơn hàng từ orderDTO
         Order order = new Order();
         modelMapper.map(orderDTO, order);
         order.setUser(user);
-        order.setOrderDate(new Date()); // Lay thoi diem hien tai
-        order.setStatus(OrderStatus.PENDING); // mac dinh 1 don hang tao ra la pending
-        // Kiem tra shipping date phai >= ngay hom nay
-        LocalDate shippingDate = orderDTO.getShippingDate() == null ? LocalDate.now() : orderDTO.getShippingDate();
-        if(shippingDate.isBefore(LocalDate.now())) {
-            throw new DataNotFoundException("Date must be at least today!");
+        order.setOrderDate(new Date());//lấy thời điểm hiện tại
+        order.setStatus(OrderStatus.PENDING);
+        //Kiểm tra shipping date phải >= ngày hôm nay
+        LocalDate shippingDate = orderDTO.getShippingDate() == null
+                ? LocalDate.now() : orderDTO.getShippingDate();
+        if (shippingDate.isBefore(LocalDate.now())) {
+            throw new DataNotFoundException("Date must be at least today !");
         }
         order.setShippingDate(shippingDate);
         order.setActive(true);
         orderRepository.save(order);
-        return modelMapper.map(order, OrderResponse.class);
+        return order;
     }
 
     @Override
-    public OrderResponse getOrder(Long id) {
+    public Order getOrder(Long id) {
         return null;
     }
 
     @Override
-    public OrderResponse updateOrder(Long id, OrderDTO orderDTO) {
+    public Order updateOrder(Long id, OrderDTO orderDTO) {
         return null;
     }
 
@@ -68,7 +68,7 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    public List<OrderResponse> getAllOrders(Long userId) {
+    public List<Order> getAllOrders(Long userId) {
         return List.of();
     }
 }
