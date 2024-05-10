@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("${api.prefix}/order_details")
 public class OrderDetailController {
-    @PostMapping
+    @PostMapping()
     public ResponseEntity<?> createOrderDetail(@Valid @RequestBody OrderDetailDTO orderDetailDTO) {
         return ResponseEntity.ok("createOrderDetail successfully");
     }

@@ -3,7 +3,6 @@ package com.project.shopapp.controllers;
 import com.project.shopapp.dtos.CategoryDTO;
 import com.project.shopapp.models.Category;
 import com.project.shopapp.services.ICategoryService;
-import com.project.shopapp.services.impl.CategoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +23,7 @@ public class CategoryController {
     @PostMapping()
     // Neu tham so truyen vao 1 doi tuong thi sao? => Data Transfer Object = Request Object
     public ResponseEntity<?> createCategory(
-            @RequestBody @Valid CategoryDTO categoryDTO,
+            @Valid @RequestBody CategoryDTO categoryDTO,
             BindingResult result) {
         if(result.hasErrors()) {
             List<String> errorMessages = result.getFieldErrors()
@@ -38,11 +37,10 @@ public class CategoryController {
     }
 
     // Hien thi tat ca categories
-    @GetMapping("")
+    @GetMapping()
     public ResponseEntity<List<Category>> getAllCategories (
             @RequestParam("page") int page,
-            @RequestParam("limit") int limit
-    ) {
+            @RequestParam("limit") int limit) {
         List<Category> categories = categoryService.getAllCategories();
         return ResponseEntity.ok(categories);
     }
@@ -50,7 +48,7 @@ public class CategoryController {
     @PutMapping("/{id}")
     public ResponseEntity<String> updateCategory(
             @PathVariable Long id,
-            @RequestBody @Valid CategoryDTO categoryDTO) {
+            @Valid @RequestBody CategoryDTO categoryDTO) {
         categoryService.updateCategory(id, categoryDTO);
         return ResponseEntity.ok("Update category successfully");
     }

@@ -17,15 +17,14 @@ public class UserService implements IUserService {
     private RoleRepository roleRepository;
 
     @Override
-    public User createUser(UserDTO userDTO) {
+    public User createUser(UserDTO userDTO) throws DataIntegrityViolationException {
         String phoneNumber = userDTO.getPhoneNumber();
         // Kiem tra so dt da ton tai hay chua
         if(userRepository.existsByPhoneNumber(phoneNumber)) {
             throw new DataIntegrityViolationException("Phone number already exists");
         }
         // conver from userDTO => User
-        User newUser = User
-                .builder()
+        User newUser = User.builder()
                 .fullName(userDTO.getFullName())
                 .phoneNumber(userDTO.getPhoneNumber())
                 .password(userDTO.getPassword())
@@ -48,7 +47,7 @@ public class UserService implements IUserService {
 
     @Override
     public String login(String phoneNumber, String password) {
-        // Lien quan den sec
+        // Lien quan den security
         return null;
     }
 }

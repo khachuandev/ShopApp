@@ -3,9 +3,8 @@ package com.project.shopapp.models;
 import jakarta.persistence.*;
 import lombok.*;
 
-@EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name="products")
+@Table(name = "products")
 @Getter
 @Setter
 @NoArgsConstructor

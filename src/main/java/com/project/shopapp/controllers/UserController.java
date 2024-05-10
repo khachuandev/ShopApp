@@ -20,6 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
     private final IUserService userService;
+
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody UserDTO userDTO, BindingResult result){
         try {
@@ -31,7 +32,7 @@ public class UserController {
                 return ResponseEntity.badRequest().body(errorMessages);
             }
             if(!userDTO.getPassword().equals(userDTO.getRetypePassword())) {
-                return ResponseEntity.badRequest().body("Passwords do not match");
+                return ResponseEntity.badRequest().body("Passwords does not match");
             }
             userService.createUser(userDTO);
             return ResponseEntity.ok("Register successful");

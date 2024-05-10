@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CategoryService implements ICategoryService {
-    private final CategoryRepository categoryReposity;
+    private final CategoryRepository categoryRepository;
 
     @Override
     public Category createCategory(CategoryDTO categoryDTO) {
@@ -20,30 +20,31 @@ public class CategoryService implements ICategoryService {
                 .builder()
                 .name(categoryDTO.getName())
                 .build();
-        return categoryReposity.save(newCategory);
+        return categoryRepository.save(newCategory);
     }
 
     @Override
     public Category getCategoryById(long id) {
-        // return categoryReposity.findById(id).orElse(null); // Tim ra category co id dc nhap va ko thay tra ve null
-        return categoryReposity.findById(id)
+        // return categoryReposity.findById(id).orElse(null);
+        // Tim ra category co id dc nhap va ko thay tra ve null
+        return categoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Category not found")); // Tra ve exception va ben trong la bieu thuc lambda
     }
 
     @Override
     public List<Category> getAllCategories() {
-        return categoryReposity.findAll();
+        return categoryRepository.findAll();
     }
 
     @Override
     public Category updateCategory(long categoryId, CategoryDTO categoryDTO) {
         Category existingCategory = getCategoryById(categoryId);
         existingCategory.setName(categoryDTO.getName());
-        return categoryReposity.saveAndFlush(existingCategory);
+        return categoryRepository.saveAndFlush(existingCategory);
     }
 
     @Override
     public void deleteCategory(long id) {
-        categoryReposity.deleteById(id);
+        categoryRepository.deleteById(id);
     }
 }

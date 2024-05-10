@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
@@ -37,7 +38,7 @@ import java.util.UUID;
 public class ProductController {
     private final IProductService productService;
 
-    @PostMapping("")
+    @PostMapping()
     public ResponseEntity<?> createProduct(
             @Valid @RequestBody ProductDTO productDTO,
             BindingResult result) {
@@ -106,13 +107,13 @@ public class ProductController {
         // Them UUID vao trc ten file de dam bao ten file la duy nhat
         String uniqueFilename = UUID.randomUUID().toString() + "_" + filename;
         // Duong dan den thu muc ma ban muon luu file
-        java.nio.file.Path uploadDir = Paths.get("uploads");
+        Path uploadDir = Paths.get("uploads");
         // Kiem tra va tao thu muc neu no ko ton tai
         if(!Files.exists(uploadDir)) {
             Files.createDirectories(uploadDir);
         }
         // Duong dan den file dich
-        java.nio.file.Path destination = Paths.get(uploadDir.toString(), uniqueFilename);
+        Path destination = Paths.get(uploadDir.toString(), uniqueFilename);
         // Sao chep file vao thu muc dich
         Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
         return uniqueFilename;
@@ -123,10 +124,11 @@ public class ProductController {
         return contentType != null && contentType.startsWith("image/");
     }
 
-    @GetMapping("")
+    @GetMapping()
     public ResponseEntity<ProductListResponse> getProducts(
             @RequestParam("page") int page,
             @RequestParam("limit") int limit) {
+        // Tao Pageable tu thong tin trang voi gioi han
         PageRequest pageRequest = PageRequest.of(page, limit, Sort.by("createdAt").descending());
         Page<ProductResponse> productPage = productService.getAllProducts(pageRequest);
         // Lay tong so trang
@@ -150,10 +152,10 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteProduct(@PathVariable("id") long productId) {
+    public ResponseEntity<String> deleteProduct(@PathVariable("id") Long productId) {
         try {
             productService.deleteProduct(productId);
-            return ResponseEntity.ok(String.format("Product %s deleted", productId));
+            return ResponseEntity.ok(String.format("Product with id = %d deleted successfully", productId));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

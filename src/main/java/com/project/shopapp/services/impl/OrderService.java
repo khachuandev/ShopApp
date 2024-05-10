@@ -25,12 +25,12 @@ public class OrderService implements IOrderService {
 
     @Override
     public Order createOrder(OrderDTO orderDTO) throws Exception {
-        //tìm xem user'id có tồn tại ko
+        // tìm xem user'id có tồn tại ko
         User user = userRepository
                 .findById(orderDTO.getUserId())
-                .orElseThrow(() -> new DataNotFoundException("Cannot find user with id: "+orderDTO.getUserId()));
-        //convert orderDTO => Order
-        //dùng thư viện Model Mapper
+                .orElseThrow(() -> new DataNotFoundException("Cannot find user with id: " + orderDTO.getUserId()));
+        // convert orderDTO => Order
+        // dùng thư viện Model Mapper
         // Tạo một luồng bảng ánh xạ riêng để kiểm soát việc ánh xạ
         modelMapper.typeMap(OrderDTO.class, Order.class)
                 .addMappings(mapper -> mapper.skip(Order::setId));
@@ -38,13 +38,13 @@ public class OrderService implements IOrderService {
         Order order = new Order();
         modelMapper.map(orderDTO, order);
         order.setUser(user);
-        order.setOrderDate(new Date());//lấy thời điểm hiện tại
+        order.setOrderDate(new Date()); //lấy thời điểm hiện tại
         order.setStatus(OrderStatus.PENDING);
-        //Kiểm tra shipping date phải >= ngày hôm nay
+        // Kiểm tra shipping date phải >= ngày hôm nay
         LocalDate shippingDate = orderDTO.getShippingDate() == null
                 ? LocalDate.now() : orderDTO.getShippingDate();
         if (shippingDate.isBefore(LocalDate.now())) {
-            throw new DataNotFoundException("Date must be at least today !");
+            throw new DataNotFoundException("Date must be at least today!");
         }
         order.setShippingDate(shippingDate);
         order.setActive(true);
@@ -68,7 +68,7 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    public List<Order> getAllOrders(Long userId) {
+    public List<Order> findByUserId(Long userId) {
         return List.of();
     }
 }

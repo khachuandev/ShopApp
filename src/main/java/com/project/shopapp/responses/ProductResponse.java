@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.project.shopapp.models.Product;
 import lombok.*;
 
-@Data
 @Getter
 @Setter
 @AllArgsConstructor
